@@ -8,8 +8,8 @@ export default function Information() {
       <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl whitespace-nowrap">
         Your <span className="text-blue-400 bold">Transcription</span>
       </h1>
-      <div className="flex mx-auto bg-white shadow rounded-full overflow-hidden items-center gap-2">
-        <buttpn
+      <div className="grid grid-cols-2 mx-auto bg-white shadow rounded-full overflow-hidden items-center">
+        <button
           onClick={() => setTab("transcription")}
           className={
             "px-4 py-1 font-medium duration-200" +
@@ -19,7 +19,7 @@ export default function Information() {
           }
         >
           Transcription
-        </buttpn>
+        </button>
         <button
           onClick={() => setTab("translation")}
           className={
