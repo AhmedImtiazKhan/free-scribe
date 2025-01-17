@@ -32,6 +32,9 @@ export default function Information() {
           Translation
         </button>
       </div>
+      (tab === 'transcription' ? (
+      <Transcription /> ) : (
+      <Translation />)
     </main>
   );
 }

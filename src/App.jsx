@@ -3,14 +3,15 @@ import Header from "./components/Header";
 import HomePage from "./components/HomePage";
 import FileDisplay from "./components/FileDisplay";
 import Information from "./components/Information";
-import Transcribing from "./components/Transcribing";
+import Transcribing from "./components/Transcriping";
 
 function App() {
   const [count, setCount] = useState(0);
   const [file, setFile] = useState(null);
   const [audioStream, setAudioStream] = useState(null);
   const [output, setOutput] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [finished, setFinished] = useState(false);
 
   const isAudioAvailable = file || audioStream;
   function handleAudioReset() {
