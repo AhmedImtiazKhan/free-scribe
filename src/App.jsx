@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Header from "./components/Header";
 import HomePage from "./components/HomePage";
 import FileDisplay from "./components/FileDisplay";
 import Information from "./components/Information";
 import Transcribing from "./components/Transcriping";
+import { use } from "react";
 
 function App() {
   const [count, setCount] = useState(0);
@@ -19,9 +20,13 @@ function App() {
     setAudioStream(null);
   }
 
+  const worker = useRef(null);
+
   useEffect(() => {
-    console.log(audioStream);
-  }, [audioStream]);
+    if (!worker.current) {
+      worker.current = new Worker(new URL("./"));
+    }
+  }, []);
 
   return (
     <>
