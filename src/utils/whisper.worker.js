@@ -39,6 +39,37 @@ self.addEventListener('message',async (e) => {
         const generationTracker= new GenerationTracker(pipeline,stride_length_s);
         await pipeline(audio,{
             top_k:0,
+            do_sample:false,
+            chunk_lenght:30,
             stride_length_s,
+            return_timestamps:true,
+            callback_function:generationTracker.callbackFunction.bind(generationTracker),
+        });
+        generationTracker.finish();
+
         }
-    };
+        async function load_modal_callback(data){
+            const {status} = data;
+            if{status=== 'progress'}{
+                const {file,progress,loaded,total} = data;
+                sendDownloadMessage(progress,loaded,total,file);
+
+        }
+    }
+    async function sendLoadingMessage(status){
+        self.postMessage({
+            type:MessageTypes.LOADING,
+            status,
+        });
+    }
+
+    async function sendDownloadMessage(progress,loaded,total,file){
+        self.postMessage({
+            type:MessageTypes.DOWNLOADING,
+            progress,
+            loaded,
+            total,
+            file,
+        });
+    }
+    
