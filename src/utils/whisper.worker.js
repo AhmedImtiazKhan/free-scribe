@@ -49,8 +49,8 @@ self.addEventListener('message',async (e) => {
 
         }
         async function load_modal_callback(data){
-            const {status} = data;
-            if{status=== 'progress'}{
+            const {status} = data
+            if(status === 'progress'){
                 const {file,progress,loaded,total} = data;
                 sendDownloadMessage(progress,loaded,total,file);
 
