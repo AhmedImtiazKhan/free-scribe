@@ -90,6 +90,7 @@ function App() {
               handleAudioReset={handleAudioReset}
               file={file}
               audioStream={setAudioStream}
+              handleFormSubmission={handleFormSubmission}
             />
           ) : (
             <HomePage setFile={setFile} setAudioStream={setAudioStream} />
