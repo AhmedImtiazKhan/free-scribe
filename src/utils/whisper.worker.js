@@ -23,21 +23,26 @@ self.addEventListener('message', async (event) => {
 })
 
 async function transcribe(audio) {
-    sendLoadingMessage('loading')
+    sendLoadingMessage('loading');
 
-    let pipeline
+    let pipeline;
 
     try {
-        pipeline = await MyTranscriptionPipeline.getInstance(load_model_callback)
+        pipeline = await MyTranscriptionPipeline.getInstance(load_model_callback);
+        if (!pipeline || !pipeline.model) {
+            throw new Error("Pipeline initialization failed");
+        }
     } catch (err) {
-        console.log(err.message)
+        console.error("Error initializing pipeline:", err.message);
+        sendLoadingMessage('error');
+        return;
     }
 
-    sendLoadingMessage('success')
+    sendLoadingMessage('success');
 
-    const stride_length_s = 5
+    const stride_length_s = 5;
+    const generationTracker = new GenerationTracker(pipeline, stride_length_s);
 
-    const generationTracker = new GenerationTracker(pipeline, stride_length_s)
     await pipeline(audio, {
         top_k: 0,
         do_sample: false,
@@ -46,9 +51,11 @@ async function transcribe(audio) {
         return_timestamps: true,
         callback_function: generationTracker.callbackFunction.bind(generationTracker),
         chunk_callback: generationTracker.chunkCallback.bind(generationTracker)
-    })
-    generationTracker.sendFinalResult()
+    });
+
+    generationTracker.sendFinalResult();
 }
+
 
 async function load_model_callback(data) {
     const { status } = data
@@ -77,12 +84,17 @@ async function sendDownloadingMessage(file, progress, loaded, total) {
 
 class GenerationTracker {
     constructor(pipeline, stride_length_s) {
-        this.pipeline = pipeline
-        this.stride_length_s = stride_length_s
-        this.chunks = []
-        this.time_precision = pipeline?.processor.feature_extractor.config.chunk_length / pipeline.model.config.max_source_positions
-        this.processed_chunks = []
-        this.callbackFunctionCounter = 0
+        if (!pipeline || !pipeline.model) {
+            throw new Error("Invalid pipeline instance: model is undefined");
+        }
+
+        this.pipeline = pipeline;
+        this.stride_length_s = stride_length_s;
+        this.chunks = [];
+        this.time_precision = pipeline?.processor?.feature_extractor?.config?.chunk_length /
+                              pipeline?.model?.config?.max_source_positions || 1; // Default to 1 to prevent NaN errors
+        this.processed_chunks = [];
+        this.callbackFunctionCounter = 0;
     }
 
     sendFinalResult() {

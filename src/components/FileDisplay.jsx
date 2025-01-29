@@ -6,40 +6,19 @@ export default function FileDisplay(props) {
 
   useEffect(() => {
     if (!file && !audioStream) {
-      if (audioRef.current) {
-        audioRef.current.src = ""; // Clear the audio source
-      }
       return;
     }
-
-    let objectURL;
-
-    if (file && file instanceof File) {
+    if (file) {
       console.log("HERE FILE", file);
-      objectURL = URL.createObjectURL(file);
-    } else if (audioStream && audioStream instanceof MediaStream) {
-      console.log("HERE AUDIO", audioStream);
-      objectURL = URL.createObjectURL(audioStream);
+      audioRef.current.src = URL.createObjectURL(file);
     } else {
-      console.error("Invalid file or audio stream");
-      return;
+      console.log("EHER AUDIO", audioStream);
+      audioRef.current.src = URL.createObjectURL(audioStream);
     }
-
-    if (audioRef.current) {
-      audioRef.current.src = objectURL;
-    } else {
-      console.warn("Audio ref is not initialized");
-    }
-
-    // Cleanup: Revoke object URL when component unmounts or dependencies change
-    return () => {
-      if (objectURL) {
-        URL.revokeObjectURL(objectURL);
-      }
-    };
   }, [audioStream, file]);
+
   return (
-    <main className="flex-1 p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 w-72 sm:w-96 max-w-prose mx-auto">
+    <main className="flex-1  p-4 flex flex-col gap-3 text-center sm:gap-4 justify-center pb-20 w-full max-w-prose mx-auto">
       <h1 className="font-semibold text-4xl sm:text-5xl md:text-6xl">
         Your <span className="text-blue-400 bold">File</span>
       </h1>
